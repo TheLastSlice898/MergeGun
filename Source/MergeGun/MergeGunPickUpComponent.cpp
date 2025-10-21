@@ -24,8 +24,5 @@ void UMergeGunPickUpComponent::OnSphereBeginOverlap(UPrimitiveComponent* Overlap
 	{
 		// Notify that the actor is being picked up
 		OnPickUp.Broadcast(Character);
-
-		// Unregister from the Overlap Event so it is no longer triggered
-		OnComponentBeginOverlap.RemoveAll(this);
 	}
 }

@@ -44,7 +44,9 @@ public:
 	/** Attaches the actor to a FirstPersonCharacter */
 	UFUNCTION(BlueprintCallable, Category="Weapon")
 	bool AttachWeapon(AMergeGunCharacter* TargetCharacter);
-
+	/** Detaches the Actor from the FirstPersonChar */
+	UFUNCTION(BlueprintCallable, Category = "Weapon")
+	bool DetachWeapon(AMergeGunCharacter* TargetCharacter);
 	/** Make the weapon Fire a Projectile */
 	UFUNCTION(BlueprintCallable, Category="Weapon")
 	void Fire();
@@ -57,4 +59,6 @@ protected:
 private:
 	/** The Character holding this weapon*/
 	AMergeGunCharacter* Character;
+	// The handle to the fire binding
+	int32 FireBindingHandle = INDEX_NONE;
 };

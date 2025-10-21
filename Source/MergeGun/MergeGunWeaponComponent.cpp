@@ -92,10 +92,41 @@ bool UMergeGunWeaponComponent::AttachWeapon(AMergeGunCharacter* TargetCharacter)
 		if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerController->InputComponent))
 		{
 			// Fire
-			EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Triggered, this, &UMergeGunWeaponComponent::Fire);
+			FEnhancedInputActionEventBinding& Binding = EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Triggered, this, &UMergeGunWeaponComponent::Fire);
+
+			FireBindingHandle = Binding.GetHandle();
 		}
 	}
 
+	return true;
+}
+
+bool UMergeGunWeaponComponent::DetachWeapon(AMergeGunCharacter* TargetCharacter)
+{
+	Character = TargetCharacter;
+
+	// Check that the character is valid, and has this weapon component
+	if (Character == nullptr || Character->GetInstanceComponents().FindItemByClass<UMergeGunWeaponComponent>())
+	{
+		return false;
+	}
+
+	// Detach the weapon from the First Person Character
+	DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
+
+	//detach input mapping context
+	if (APlayerController* PlayerController = Cast<APlayerController>(Character->GetController())) 
+	{
+		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
+		{
+			Subsystem->RemoveMappingContext(FireMappingContext);
+		}
+		
+		if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerController->InputComponent))
+		{
+			EnhancedInputComponent->RemoveBindingByHandle(FireBindingHandle);
+		}
+	}
 	return true;
 }
 
