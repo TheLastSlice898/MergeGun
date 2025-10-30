@@ -3,38 +3,70 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GunPartComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/StaticMeshComponent.h"
+#include "MergeGun/MergeGunWeaponComponent.h"
 #include "GameFramework/Actor.h"
 #include "GunActor.generated.h"
 
-UCLASS()
+UCLASS(Blueprintable)
+class UGunStats : public UObject
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	float Damage;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 Ammo;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float FireRate;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float Accuracy;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float HandleSpeed;
+
+	virtual void InitializeStats(float InDamage, int32 InAmmo, float InFireRate, float InAccuracy, float InHandleSpeed)
+	{
+		Damage = InDamage;
+		Ammo = InAmmo;
+		FireRate = InFireRate;
+		Accuracy = InAccuracy;
+		HandleSpeed = InHandleSpeed;
+	}
+};
+
+
+
+UCLASS(Abstract, meta = (PrioritizeCategories = "Parts"))
 class MERGEGUN_API AGunActor : public AActor
 {
 	GENERATED_BODY()
 
-	
-public:	
+public:
 	// Sets default values for this actor's properties
 	AGunActor();
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Mesh)
-	class USkeletalMeshComponent* GunMesh;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Default", meta = (DisplayPriority = "1"))
+	UMergeGunWeaponComponent* Core;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Mesh)
-	class UStaticMeshComponent* BarrelMesh;
+	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category = "Parts")
+	TSubclassOf<AGunPartComponent> Barrel;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Mesh)
-	class UStaticMeshComponent* SightMesh;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Parts")
+	TSubclassOf<AGunPartComponent> Sight;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Mesh)
-	class UStaticMeshComponent* GripMesh;
+	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category = "Parts")
+	TSubclassOf<AGunPartComponent> Grip;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Mesh)
-	class UStaticMeshComponent* ForgripMesh;
+	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category = "Parts")
+	TSubclassOf<AGunPartComponent> Stock;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Mesh)
-	class UStaticMeshComponent* StockMesh;
 
 protected:
 	// Called when the game starts or when spawned

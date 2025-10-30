@@ -2,26 +2,31 @@
 
 
 #include "GunPartComponent.h"
+#include "Components/StaticMeshComponent.h"
 
 // Sets default values
 AGunPartComponent::AGunPartComponent()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	// Create and assign the mesh component so PartMesh is valid at runtime
+	PartMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("PartMesh"));
+	RootComponent = PartMesh;
+
+	// Optional: configure defaults
+	PartMesh->SetCollisionProfileName(TEXT("BlockAll"));
+	PartMesh->SetMobility(EComponentMobility::Movable);
 }
 
 // Called when the game starts or when spawned
 void AGunPartComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 // Called every frame
 void AGunPartComponent::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 

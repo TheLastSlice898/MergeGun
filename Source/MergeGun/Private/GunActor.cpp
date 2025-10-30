@@ -1,41 +1,45 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "GunActor.h"
+#include "GunPartComponent.h"
 
 // Sets default values
 AGunActor::AGunActor()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	BarrelMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BarrelMesh"));
-	SightMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("SightMesh"));
-	GripMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("GripMesh"));
-	ForgripMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ForgripMesh"));
-	StockMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StockMesh"));
-
-	GunMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("GunMesh"));
-
-	BarrelMesh->SetupAttachment(GunMesh, TEXT("Barrel"));
-	SightMesh->SetupAttachment(GunMesh,TEXT("Sight"));
-	GripMesh->SetupAttachment(GunMesh,TEXT("Grip"));
-	// ForgripMesh->SetupAttachment(GunMesh,TEXT("ForeGrip"));
-	StockMesh->SetupAttachment(GunMesh, TEXT("Stock"));
-
+	Core = CreateDefaultSubobject<UMergeGunWeaponComponent>(TEXT("GunCore"));
+	if (Core)
+	{
+		RootComponent = Core;
+	}
 }
 
 // Called when the game starts or when spawned
 void AGunActor::BeginPlay()
 {
-	
-	
+	Super::BeginPlay();
+
+	// Spawn the barrel once (make sure Barrel is set in the editor or elsewhere)
+	if (Barrel != nullptr && GetWorld() && Core)
+	{
+		const FTransform SocketTransform = Core->GetSocketTransform(TEXT("Barrel_Socket"));
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.Owner = this;
+		SpawnParams.Instigator = GetInstigator();
+
+		AGunPartComponent* SpawnedPart = GetWorld()->SpawnActor<AGunPartComponent>(Barrel, SocketTransform, SpawnParams);
+		if (SpawnedPart)
+		{
+			// Attach spawned actor to the weapon component at the socket
+			SpawnedPart->AttachToComponent(Core, FAttachmentTransformRules::SnapToTargetIncludingScale, TEXT("Barrel_Socket"));
+		}
+	}
 }
 
 // Called every frame
 void AGunActor::Tick(float DeltaTime)
 {
-	
-
+	Super::Tick(DeltaTime);
 }
 

@@ -6,6 +6,16 @@
 #include "GameFramework/Actor.h"
 #include "GunPartComponent.generated.h"
 
+
+UENUM(BlueprintType)
+enum class EGunPartType : uint8
+{
+	Barrel	UMETA(DisplayName = "Barrel"),
+	Sight	UMETA(DisplayName = "Sight"),
+	Grip	UMETA(DisplayName = "Grip"),
+	Stock	UMETA(DisplayName = "Stock")
+};
+
 UCLASS()
 class MERGEGUN_API AGunPartComponent : public AActor
 {
@@ -14,6 +24,13 @@ class MERGEGUN_API AGunPartComponent : public AActor
 public:	
 	// Sets default values for this actor's properties
 	AGunPartComponent();
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Default")
+	UStaticMeshComponent* PartMesh;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Default")
+	EGunPartType PartType;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Default")
+	class UGunStats* PartStats;
 
 protected:
 	// Called when the game starts or when spawned
